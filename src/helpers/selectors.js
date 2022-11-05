@@ -1,0 +1,14 @@
+
+export function getAppointmentsForDay(state, day) {
+  //... returns an array of appointments for that day
+  const d = state.days.find(x => x.name === day);
+  if (!d) {
+    return [];
+  }
+  const result = [];
+  for (let appointmentId of d.appointments) {
+    result.push(state.appointments[appointmentId]);
+  }
+
+  return result;
+}
