@@ -24,17 +24,28 @@ export default function Application(props) {
   function bookInterview(id, interview) {
     console.log(id, interview);
 
-    setState(prev => {
-      const newAppointments = {
-        ... appointments, 
-        
-      };
-      const newState = {
-        ...prev, 
-        appointments: newAppointments
-      };
-      return newState;
-    });
+    return axios.put(`http://localhost:8001/api/appointments/${id}`, { interview })
+      .then(() => {
+        setState(prev => {
+          const appointment = {
+            ...state.appointments[id],
+            interview: { ...interview }
+          };
+
+          let newAppointments = {
+            ...prev.appointments,
+          };
+
+          newAppointments[id] = appointment;
+
+          const newState = {
+            ...prev,
+            appointments: newAppointments
+          };
+
+          return newState;
+        });
+      });
   }
 
 
