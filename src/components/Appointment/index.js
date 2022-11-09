@@ -4,6 +4,7 @@ import Show from "./Show";
 import Empty from "./Empty";
 import Form from "./Form";
 import Status from "./Status";
+import Confirm from "./Confirm";
 import useVisualMode from "hooks/useVisualMode";
 
 import "components/Appointment/styles.scss";
@@ -13,6 +14,7 @@ const SHOW = "SHOW";
 const CREATE = "CREATE";
 const SAVING = "SAVING";
 const DELETING = "DELETING";
+const CONFIRMING = "CONFIRMING";
 
 export default function Appointment(props) {
   const { mode, transition, back } = useVisualMode(
@@ -36,31 +38,36 @@ export default function Appointment(props) {
     props.deleteAppointment(props.id)
       .then(() => {
         transition(EMPTY);
-  })
-}
+      });
+  }
 
-return (
-  <article className="appointment">
+  return (
+    <article className="appointment">
 
-    <Header time={props.time}>  </Header>
-    {mode === CREATE && <Form
-      interviewers={props.interviewers}
-      onSave={save}
-      onCancel={() => back()}
-    />}
-    {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
-    {mode === SHOW && (
-      <Show
-        student={props.interview.student}
-        interviewer={props.interview.interviewer}
-        onDelete={onDelete}
+      <Header time={props.time}>  </Header>
+      {mode === CREATE && <Form
+        interviewers={props.interviewers}
+        onSave={save}
+        onCancel={() => back()}
+      />}
+      {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
 
-      />
-    )}
-    {mode === DELETING && <Status message={"Deleting"} />}
+      {mode === SHOW && (
+        <Show
+          student={props.interview.student}
+          interviewer={props.interview.interviewer}
+          onDelete={() => transition(CONFIRMING)}
+        />
+      )}
+      {mode === CONFIRMING && <Confirm
+        onCancel={() => back()}
+        onConfirm={onDelete}
+      />}
 
-    {mode === SAVING && <Status message={"Saving"} />}
+      {mode === DELETING && <Status message={"Deleting"} />}
 
-  </article>
-);
+      {mode === SAVING && <Status message={"Saving"} />}
+
+    </article>
+  );
 }
