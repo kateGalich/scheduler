@@ -79,7 +79,7 @@ export default function Appointment(props) {
         onSave={save}
         onCancel={() => back()}
         student={props.interview.student}
-        interviewer={props.interview.interviewer}
+        interviewer={props.interview.interviewer.id}
       />}
 
       {mode === DELETING && <Status message={"Deleting"} />}

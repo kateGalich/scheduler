@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { func } from "prop-types";
 
 export default function useApplicationData(initialMode) {
 
@@ -9,10 +10,21 @@ export default function useApplicationData(initialMode) {
     appointments: {},
     interviewers: {}
   });
-  console.log(state);
   const setDay = day => setState(prev => ({ ...prev, day }));
+
+  function updateSpots(state) {
+    for (let day of state.days) {
+      day.spots = 0;
+      for (let appointmentId of day.appointments) {
+        if (//appointmentId != day.appointments[day.appointments.length - 1] &&
+          state.appointments[appointmentId].interview === null) {
+          day.spots++;
+        }
+      }
+    }
+  }
+
   function bookInterview(id, interview) {
-    console.log(id, interview);
 
     return axios.put(`http://localhost:8001/api/appointments/${id}`, { interview })
       .then(() => {
@@ -33,6 +45,8 @@ export default function useApplicationData(initialMode) {
             appointments: newAppointments
           };
 
+          updateSpots(newState);
+
           return newState;
         });
       });
@@ -51,6 +65,7 @@ export default function useApplicationData(initialMode) {
             ...prev,
             appointments: newAppointments
           };
+          updateSpots(newState);
 
           return newState;
         });
@@ -65,7 +80,6 @@ export default function useApplicationData(initialMode) {
       setState(prev => ({ ...prev, days: all[0].data, appointments: all[1].data, interviewers: all[2].data }));
     });
   }, []);
-
 
   return { state, setDay, bookInterview, deleteAppointment };
 }

@@ -20,7 +20,7 @@ export default function Form(props) {
       setError1("");
     }
 
-    if (interviewer === null) {
+    if (!interviewer) {
       setError2("Please select an interviewer");
       return;
     } else {
